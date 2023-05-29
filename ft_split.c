@@ -1,5 +1,10 @@
 #include "parsing.h"
 
+int	ft_is_white_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n');
+}
+
 size_t	ft_strlen(const char *s)
 {
 	size_t	len;
@@ -40,7 +45,7 @@ static	void	free_all(char **s, size_t i)
 	free(s);
 }
 
-static	size_t	calculate_nub_string(char const *s, char c)
+static	size_t	calculate_nub_string(char const *s)
 {
 	size_t	i;
 	size_t	nub;
@@ -51,11 +56,11 @@ static	size_t	calculate_nub_string(char const *s, char c)
 	found = 1;
 	nub = 0;
 	i = 0;
-	while (s[i] == c)
+	while (ft_is_white_space(s[i]))
 		i++;
 	while (i < len)
 	{
-		if (s[i] == c)
+		if (ft_is_white_space(s[i]))
 			found = 1;
 		else
 		{
@@ -68,7 +73,7 @@ static	size_t	calculate_nub_string(char const *s, char c)
 	return (nub);
 }
 
-static	void	ft_copie_words(char **res, size_t nb_wor, char const *s, char c)
+static	void	ft_copie_words(char **res, size_t nb_wor, char const *s)
 {
 	size_t	i;
 	size_t	len;
@@ -77,9 +82,9 @@ static	void	ft_copie_words(char **res, size_t nb_wor, char const *s, char c)
 	while (*s && i < nb_wor)
 	{
 		len = 0;
-		while (*s && *s == c)
+		while (*s && ft_is_white_space(*s))
 			s++;
-		while (s[len] != '\0' && s[len] != c)
+		while (s[len] != '\0' &&  !ft_is_white_space(s[len]))
 			len++;
 		res[i] = malloc(len + 1);
 		if (res[i] == NULL)
@@ -94,19 +99,19 @@ static	void	ft_copie_words(char **res, size_t nb_wor, char const *s, char c)
 	res[i] = NULL;
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char const *s)
 {
 	char	**result;
 	size_t	nub_words;
 
 	if (s == NULL)
 		return (NULL);
-	while (*s && *s == c)
+	while (*s && ft_is_white_space(*s))
 		s++;
-	nub_words = calculate_nub_string(s, c);
+	nub_words = calculate_nub_string(s);
 	result = malloc((nub_words + 1) * sizeof(char *));
 	if (result == NULL)
 		return (NULL);
-	ft_copie_words(result, nub_words, s, c);
+	ft_copie_words(result, nub_words, s);
 	return (result);
 }

@@ -3,17 +3,16 @@
 #include <stdio.h>
 #include "parsing.h"
 
-bool    init_info(char *line, t_info *info)
+bool    init_info(char **result, t_info *info)
 {
     int i = 0;
-    char    **result = ft_split(line, ' ');
 
     while (result[i])
         i++;
     if (i != 2)
         return (false);
     if (!strcmp(result[0], "NO"))
-    {;
+    {
         if (!info->north)
         {
             info->north = strdup(result[1]);
@@ -21,7 +20,7 @@ bool    init_info(char *line, t_info *info)
         }
     }
     else if (!strcmp(result[0], "SO"))
-    {;
+    {
         if (!info->south)
         {
             info->south = strdup(result[1]);
@@ -29,7 +28,7 @@ bool    init_info(char *line, t_info *info)
         }
     }
     else if (!strcmp(result[0], "WE"))
-    {;
+    {
         if (!info->west)
         {
             info->west = strdup(result[1]);
@@ -37,7 +36,7 @@ bool    init_info(char *line, t_info *info)
         }
     }
     else if (!strcmp(result[0], "EA"))
-    {;
+    {
         if (!info->east)
         {
             info->east = strdup(result[1]);
@@ -67,15 +66,17 @@ bool    check_option_map(int fd, t_info *info)
 {
     char    *line;
     bool    r;
-    int     i;
+    int      i;
+    char      **result;
 
     i = 0;
     line = get_next_line(fd);
     while (line && i < 6)
     {
-        if (strcmp(line, "\n"))
+        result = ft_split(line);
+        if (result[0] && strcmp(result[0], "\n"))
         {
-            r = init_info(line, info);
+            r = init_info(result, info);
             if (r == false)
                 return (false);
             i++;
