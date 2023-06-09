@@ -1,39 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amentag <amentag@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/07 13:11:35 by amentag           #+#    #+#             */
+/*   Updated: 2022/10/19 13:14:08 by amentag          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
-
-int	ft_is_white_space(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	len;
-
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	i;
-	size_t	lsrc;
-
-	lsrc = ft_strlen(src);
-	i = 0;
-	if (dstsize != 0)
-	{
-		while (src[i] != 0 && i < dstsize - 1)
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = 0;
-	}
-	return (lsrc);
-}
-
 static	void	free_all(char **s, size_t i)
 {
 	i--;
@@ -45,7 +22,7 @@ static	void	free_all(char **s, size_t i)
 	free(s);
 }
 
-static	size_t	calculate_nub_string(char const *s)
+static	size_t	calculate_nub_string(char const *s, char c)
 {
 	size_t	i;
 	size_t	nub;
@@ -56,11 +33,11 @@ static	size_t	calculate_nub_string(char const *s)
 	found = 1;
 	nub = 0;
 	i = 0;
-	while (ft_is_white_space(s[i]))
+	while (s[i] == c)
 		i++;
 	while (i < len)
 	{
-		if (ft_is_white_space(s[i]))
+		if (s[i] == c)
 			found = 1;
 		else
 		{
@@ -73,7 +50,7 @@ static	size_t	calculate_nub_string(char const *s)
 	return (nub);
 }
 
-static	void	ft_copie_words(char **res, size_t nb_wor, char const *s)
+static	void	ft_copie_words(char **res, size_t nb_wor, char const *s, char c)
 {
 	size_t	i;
 	size_t	len;
@@ -82,9 +59,9 @@ static	void	ft_copie_words(char **res, size_t nb_wor, char const *s)
 	while (*s && i < nb_wor)
 	{
 		len = 0;
-		while (*s && ft_is_white_space(*s))
+		while (*s && *s == c)
 			s++;
-		while (s[len] != '\0' &&  !ft_is_white_space(s[len]))
+		while (s[len] != '\0' && s[len] != c)
 			len++;
 		res[i] = malloc(len + 1);
 		if (res[i] == NULL)
@@ -99,19 +76,19 @@ static	void	ft_copie_words(char **res, size_t nb_wor, char const *s)
 	res[i] = NULL;
 }
 
-char	**ft_split(char const *s)
+char	**ft_split(char const *s, char c)
 {
 	char	**result;
 	size_t	nub_words;
 
 	if (s == NULL)
 		return (NULL);
-	while (*s && ft_is_white_space(*s))
+	while (*s && *s == c)
 		s++;
-	nub_words = calculate_nub_string(s);
+	nub_words = calculate_nub_string(s, c);
 	result = malloc((nub_words + 1) * sizeof(char *));
 	if (result == NULL)
 		return (NULL);
-	ft_copie_words(result, nub_words, s);
+	ft_copie_words(result, nub_words, s, c);
 	return (result);
 }
